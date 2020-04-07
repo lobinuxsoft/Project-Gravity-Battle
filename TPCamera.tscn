@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Scripts/TPCamera.cs" type="Script" id=1]
+
+[sub_resource type="SphereShape" id=1]
+radius = 0.5
+
+[node name="TPCamera" type="Spatial"]
+script = ExtResource( 1 )
+_springArmNode = NodePath("Pivot/Gimbal")
+
+[node name="Pivot" type="Position3D" parent="."]
+
+[node name="Gimbal" type="SpringArm" parent="Pivot"]
+transform = Transform( 1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707106, 0, 0, 0 )
+shape = SubResource( 1 )
+spring_length = 10.0
+
+[node name="Target" type="Position3D" parent="Pivot/Gimbal"]
+
+[node name="InterpolatedCamera" type="InterpolatedCamera" parent="."]
+target = NodePath("../Pivot/Gimbal/Target")
+enabled = true
