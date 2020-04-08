@@ -8,6 +8,7 @@ public class Movement : RigidBody
     [Export(PropertyHint.Range, "0,5")] int maxAirJumps = 0;
     [Export(PropertyHint.Range, "0,90")] float maxGroundAngle = 25f;
     [Export(PropertyHint.Range, "0,180")] float rotOffset = 90f;
+    [Export(PropertyHint.Range, "0,100")] float alignSpeed = 50f;
 
     private Vector3 velocity, desiredVelocity, contactNormal;
     private bool desiredJump;
@@ -42,6 +43,7 @@ public class Movement : RigidBody
         desiredVelocity = new Vector3(playerInput.x, 0f, playerInput.y) * maxSpeed;
         desiredJump |= Input.IsActionJustPressed("jump");
     }
+    
 
     public override void _IntegrateForces(PhysicsDirectBodyState bodyState)
     {
@@ -59,8 +61,8 @@ public class Movement : RigidBody
         ClearState();
 
         EvaluateColision(bodyState);
-        
-        AlignToNormal(contactNormal);
+
+        AlignToNormal(bodyState, contactNormal);
     }
     
     void Jump(PhysicsDirectBodyState bodyState)
@@ -134,9 +136,10 @@ public class Movement : RigidBody
         contactNormal = Vector3.Zero;
     }
 
-    private void AlignToNormal(Vector3 normal)
+    private void AlignToNormal(PhysicsDirectBodyState bodyState, Vector3 normal)
     {
-        var rotDegrees = RotationDegrees.Normalized();
+        var originRot = Rotation;
+        var rotDegrees = Rotation.Normalized();
         
         if (OnGround)
         {
@@ -149,7 +152,8 @@ public class Movement : RigidBody
             rotDegrees.x = Mathf.Rad2Deg(Vector2.Zero.AngleToPoint(new Vector2(normal.z, normal.y)));
         }
 
-        RotationDegrees = rotDegrees;
+        var result = originRot.LinearInterpolate(rotDegrees, bodyState.Step * alignSpeed);
+        //GD.Print($"From: {originRot} To: {result} Speed: {bodyState.Step * alignSpeed}");
+        RotationDegrees = result;
     }
-    
 }
