@@ -1,10 +1,9 @@
 using Godot;
-using System;
 
 public class RotateLookingAt : Spatial
 {
-    [Export] private NodePath referenceMovement;
-    [Export(PropertyHint.Range, "0, 100")] private float rotSpeed = 2f;
+    [Export] private readonly NodePath referenceMovement = "";
+    [Export(PropertyHint.Range, "0, 100")] private readonly float rotSpeed = 2f;
 
     private Movement movement;
 
@@ -12,25 +11,25 @@ public class RotateLookingAt : Spatial
     
     public override void _Ready()
     {
-        movement = (Movement)GetNode(referenceMovement);
+        movement = GetNode<Movement>(referenceMovement);
         dir = Transform.basis.z;
     }
 
 //  // Called every frame. 'delta' is the elapsed time since the previous frame.
   public override void _Process(float delta)
   {
-      if (movement.direction.Length() != 0)
+      if (movement.Direction.Length() != 0)
       {
-          dir = -movement.direction;
+          dir = -movement.Direction;
       }
       
-      var transOrigin = Transform;
-      var targetRot = Transform.LookingAt(dir.Normalized(), Vector3.Up);
-      transOrigin.basis = Transform.basis.Slerp(targetRot.basis, delta * rotSpeed).Orthonormalized();
+      Transform transOrigin = GlobalTransform;
+      Transform targetRot = Transform.LookingAt(dir.Normalized(), Vector3.Up);
+      transOrigin.basis = GlobalTransform.basis.Slerp(targetRot.basis, delta * rotSpeed).Orthonormalized();
       
-      Transform = transOrigin;
+      GlobalTransform = transOrigin;
 
-      var rot = RotationDegrees;
+      Vector3 rot = RotationDegrees;
 
       rot.x = 0;
       rot.z = 0;

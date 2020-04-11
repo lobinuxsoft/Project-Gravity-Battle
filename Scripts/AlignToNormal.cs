@@ -1,26 +1,24 @@
 using Godot;
-using System;
 
-public class AlignToNormal : Spatial
+public class AlignToNormal : RigidBody
 {
+    [Export] readonly Vector3 gravityDirection = Vector3.Down;
+    [Export(PropertyHint.Range, "0,180")] private float speedToAlign = 90f;
 
-    [Export] private NodePath movementReference;
 
-    private Movement _movement;
-    
-    public override void _Ready()
+    public override void _PhysicsProcess(float delta)
     {
-        _movement = (Movement) Get(movementReference);
+        Vector3 upDir = AngularVelicityAlignTo(GlobalTransform.basis.y, -gravityDirection);
+
+        AngularVelocity = upDir;
     }
 
-//  // Called every frame. 'delta' is the elapsed time since the previous frame.
-  public override void _Process(float delta)
-  {
-      var oTransform = this.Transform;
-      var cross = oTransform.basis.z.Cross(_movement.ContactNormal);
-
-      var targetDir = oTransform.LookingAt(cross, Vector3.Up);
-
-      this.Transform = targetDir;
-  }
+    private Vector3 AngularVelicityAlignTo(Vector3 currentDirection, Vector3 directionToAlign)
+    {
+        Vector3 axisRotation = currentDirection.Cross(directionToAlign).Normalized();
+        
+        float rotationAngle = currentDirection.AngleTo(directionToAlign);
+    
+        return axisRotation * (rotationAngle * speedToAlign);
+    }
 }

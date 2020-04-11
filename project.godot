@@ -58,6 +58,13 @@ jump={
  ]
 }
 
+[physics]
+
+common/physics_fps=90
+common/physics_jitter_fix=0.0
+3d/physics_engine="Bullet"
+3d/smooth_trimesh_collision=true
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"

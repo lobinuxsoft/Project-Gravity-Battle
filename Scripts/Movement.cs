@@ -1,14 +1,14 @@
 using Godot;
-using System;
 
 public class Movement : RigidBody
 {
-    [Export(PropertyHint.Range, "0,100")] private float maxSpeed = 10f, maxAcceleration = 10f, maxAirAcceleration = 1f;
+    [Export(PropertyHint.Range, "0,100")] private float limitSpeed = 15f ,maxSpeed = 10f, maxAcceleration = 10f, maxAirAcceleration = 1f;
     [Export(PropertyHint.Range, "0,100")] private float jumpHeight = 2f;
     [Export(PropertyHint.Range, "0,5")] int maxAirJumps = 0;
-    [Export(PropertyHint.Range, "0,90")] float maxGroundAngle = 25f;
-    [Export(PropertyHint.Range, "0,180")] float rotOffset = 90f;
+    [Export(PropertyHint.Range, "0,90")] float maxGroundAngle = 45f;
     [Export(PropertyHint.Range, "0,100")] float alignSpeed = 50f;
+    [Export] Vector3 gravityDirection = Vector3.Down;
+    
 
     private Vector3 velocity, desiredVelocity, contactNormal;
     private bool desiredJump;
@@ -18,9 +18,11 @@ public class Movement : RigidBody
     //bool onGround;
     int groundContactCount;
 
-    public Vector3 direction = Vector3.Forward;
+    private Vector3 direction = Vector3.Forward;
 
     bool OnGround => groundContactCount > 0;
+
+    public Vector3 Direction => direction;
 
     public Vector3 ContactNormal => contactNormal;
 
@@ -57,12 +59,12 @@ public class Movement : RigidBody
             Jump(bodyState);
         }
         bodyState.LinearVelocity = velocity;
-        //onGround = false;
+        
         ClearState();
 
         EvaluateColision(bodyState);
-
-        AlignToNormal(bodyState, contactNormal);
+        
+        AngularVelocity = AngularVelocityAlignTo(GlobalTransform.basis.y.Normalized(), contactNormal.Normalized());
     }
     
     void Jump(PhysicsDirectBodyState bodyState)
@@ -75,7 +77,6 @@ public class Movement : RigidBody
                 jumpSpeed = Mathf.Max(jumpSpeed - alignedSpeed, 0f);
             }
             
-            //velocity.y += jumpSpeed;
             velocity += contactNormal * jumpSpeed;
         }
     }
@@ -102,7 +103,7 @@ public class Movement : RigidBody
             }
         }
         else {
-            contactNormal = Vector3.Up;
+            contactNormal = -gravityDirection;
         }
     }
     
@@ -128,6 +129,11 @@ public class Movement : RigidBody
         float newZ = Mathf.MoveToward(currentZ, desiredVelocity.z, maxSpeedChange);
         
         velocity += xAxis * (newX - currentX) + zAxis * (newZ - currentZ);
+
+        if (velocity.Length() > limitSpeed)
+        {
+            velocity = velocity.Normalized() * limitSpeed;
+        }
     }
     
     void ClearState () {
@@ -136,24 +142,12 @@ public class Movement : RigidBody
         contactNormal = Vector3.Zero;
     }
 
-    private void AlignToNormal(PhysicsDirectBodyState bodyState, Vector3 normal)
+    private Vector3 AngularVelocityAlignTo(Vector3 currentDirection, Vector3 directionToAlign)
     {
-        var originRot = Rotation;
-        var rotDegrees = Rotation.Normalized();
+        Vector3 axisRotation = currentDirection.Cross(directionToAlign).Normalized();
         
-        if (OnGround)
-        {
-            rotDegrees.z = Mathf.Rad2Deg(Vector2.Zero.AngleToPoint(new Vector2(normal.x, normal.y))) + rotOffset;
-            rotDegrees.x = Mathf.Rad2Deg(Vector2.Zero.AngleToPoint(new Vector2(normal.z, normal.y))) + rotOffset;
-        }
-        else
-        {
-            rotDegrees.z = Mathf.Rad2Deg(Vector2.Zero.AngleToPoint(new Vector2(normal.x, normal.y)));
-            rotDegrees.x = Mathf.Rad2Deg(Vector2.Zero.AngleToPoint(new Vector2(normal.z, normal.y)));
-        }
+        float rotationAngle = currentDirection.AngleTo(directionToAlign);
 
-        var result = originRot.LinearInterpolate(rotDegrees, bodyState.Step * alignSpeed);
-        //GD.Print($"From: {originRot} To: {result} Speed: {bodyState.Step * alignSpeed}");
-        RotationDegrees = result;
+        return axisRotation * (rotationAngle * alignSpeed);
     }
 }

@@ -11,7 +11,7 @@ public class AnimationControl : AnimationTree
     
     public override void _Ready()
     {
-        _rigidBody = (RigidBody)GetNode(rigidBodyReference);
+        _rigidBody = GetNode<RigidBody>(rigidBodyReference);
     }
 
 //  // Called every frame. 'delta' is the elapsed time since the previous frame.

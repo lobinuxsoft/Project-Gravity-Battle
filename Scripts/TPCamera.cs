@@ -3,21 +3,34 @@ using System;
 
 public class TPCamera : Spatial
 {
-    [Export] private readonly NodePath _springArmNode = "";
-    private SpringArm _springArm;
+    
+    [Export] private NodePath targetToFollow = "";
+    [Export] private NodePath pivotNode = "";
+    [Export] private NodePath springArmNode = "";
+    [Export] private NodePath cameraNode = "";
+    [Export(PropertyHint.Range, "1,100")] private float cameraDistance = 5;
+    [Export(PropertyHint.Range, "1,100")] private float cameraLerpSpeed = 1;
+
+    private Spatial pivot;
+    private SpringArm springArm;
+    private Spatial target;
+    private InterpolatedCamera interpolatedCamera;
 
     public override async void _Ready()
     {
         await ToSignal(Owner, "ready");
-        GD.Print($"Termino la espera...");
-        
-        _springArm = GetNode<SpringArm>(_springArmNode);
-        //GD.Print($"Nodo {_springArm.Name}");
+
+        target = GetNode<Spatial>(targetToFollow);
+        pivot = GetNode<Spatial>(pivotNode);
+        springArm = GetNode<SpringArm>(springArmNode);
+        interpolatedCamera = GetNode<InterpolatedCamera>(cameraNode);
     }
 
-//  // Called every frame. 'delta' is the elapsed time since the previous frame.
-//  public override void _Process(float delta)
-//  {
-//      
-//  }
+    public override void _PhysicsProcess(float delta)
+    {
+        springArm.SpringLength = cameraDistance;
+        interpolatedCamera.Speed = cameraLerpSpeed;
+        
+        pivot.Translation = target.Translation;
+    }
 }
