@@ -1,0 +1,28 @@
+[gd_resource type="Resource" load_steps=6 format=2]
+
+[ext_resource path="res://Scripts/ScriptableObjectTest/BotStatsTable.cs" type="Script" id=1]
+[ext_resource path="res://Scripts/ScriptableObjectTest/BotStats.cs" type="Script" id=2]
+
+[sub_resource type="Resource" id=2]
+script = ExtResource( 2 )
+Health = 15
+Strings = null
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 2 )
+Health = 4
+Strings = null
+
+[sub_resource type="Resource" id=3]
+script = ExtResource( 2 )
+Health = 28
+Strings = null
+
+[resource]
+script = ExtResource( 1 )
+_stats = {
+"Algo": SubResource( 1 ),
+"Clase": SubResource( 2 ),
+"Fuerza": 10,
+"Pedo": SubResource( 3 )
+}

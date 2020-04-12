@@ -7,11 +7,12 @@
 [ext_resource path="res://Characters/Skeleton/SkeletonOutlaw@Attack02.tres" type="Animation" id=5]
 [ext_resource path="res://Characters/Skeleton/SkeletonOutlaw.dae" type="PackedScene" id=6]
 [ext_resource path="res://Characters/Skeleton/SkeletonOutlaw@Attack00.tres" type="Animation" id=7]
-[ext_resource path="res://Scripts/Movement.cs" type="Script" id=8]
-[ext_resource path="res://Scripts/RotateLookingAt.cs" type="Script" id=9]
+[ext_resource path="res://Scripts/CharacterScript/Movement.cs" type="Script" id=8]
+[ext_resource path="res://Scripts/CharacterScript/RotateLookingAt.cs" type="Script" id=9]
 [ext_resource path="res://Characters/Skeleton/Axes__Untitled_001.material" type="Material" id=10]
 [ext_resource path="res://Characters/Skeleton/Skeleton__Atlas_png.material" type="Material" id=11]
-[ext_resource path="res://Scripts/AnimationControl.cs" type="Script" id=12]
+[ext_resource path="res://Scripts/CharacterScript/AnimationControl.cs" type="Script" id=12]
+
 
 [sub_resource type="PhysicsMaterial" id=1]
 friction = 0.1

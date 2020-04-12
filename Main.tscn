@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Characters/Skeleton/SkeletonOutlaw.tscn" type="PackedScene" id=1]
 [ext_resource path="res://TPCamera.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Scripts/AlignToNormal.cs" type="Script" id=3]
+[ext_resource path="res://Scripts/CharacterScript/AlignToNormal.cs" type="Script" id=3]
 
 [sub_resource type="SpatialMaterial" id=1]
 albedo_color = Color( 0.0784314, 0.168627, 0.639216, 1 )
