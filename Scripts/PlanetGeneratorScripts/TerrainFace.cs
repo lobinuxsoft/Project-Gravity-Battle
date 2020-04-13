@@ -8,20 +8,22 @@ public class TerrainFace : MeshInstance
     private Vector3 axisA;
     private Vector3 axisB;
 
-    public TerrainFace(int newResolution, Vector3 newLocalUp)
+    public TerrainFace(int newResolution, Vector3 newLocalUp, bool flipMesh = false)
     {
         resolution = newResolution;
         localUp = newLocalUp;
         axisA = new Vector3(localUp.y, localUp.z, localUp.x);
-        axisB = localUp.Cross(axisA);
+
+        axisB = flipMesh ? localUp.Cross(axisA) : localUp.Cross(-axisA);
     }
 
-    public void SetParams(int newResolution, Vector3 newLocalUp)
+    public void UpdateParams(int newResolution, Vector3 newLocalUp, bool flipMesh = false)
     {
         resolution = newResolution;
         localUp = newLocalUp;
         axisA = new Vector3(localUp.y, localUp.z, localUp.x);
-        axisB = localUp.Cross(axisA);
+        
+        axisB = flipMesh ? localUp.Cross(axisA) : localUp.Cross(-axisA);
     }
 
     public void ConstrucMesh(bool useInBakedLight = false)
@@ -41,7 +43,7 @@ public class TerrainFace : MeshInstance
                 Vector3 pointOnUnitCube = localUp + (percent.x - .5f) * 2 * axisA + (percent.y - .5f) * 2 * axisB;
                 Vector3 pointOnUnitSphere = pointOnUnitCube.Normalized();
                 vertices[i] = pointOnUnitSphere;
-                normals[i] = localUp;
+                normals[i] = pointOnUnitSphere;
                 uvs[i] = new Vector2(x,y);
 
                 if (x != resolution-1 && y != resolution-1)
@@ -49,10 +51,11 @@ public class TerrainFace : MeshInstance
                     triangles[triIndex] = i;
                     triangles[triIndex + 1] = i + resolution + 1;
                     triangles[triIndex + 2] = i + resolution;
-
+                    
                     triangles[triIndex + 3] = i;
                     triangles[triIndex + 4] = i + 1;
                     triangles[triIndex + 5] = i + resolution + 1;
+                    
                     triIndex += 6;
                 }
             }

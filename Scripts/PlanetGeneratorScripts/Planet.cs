@@ -6,6 +6,7 @@ using Godot.Collections;
 public class Planet : Spatial
 {
     [Export(PropertyHint.Range, "2, 256")] private int resolution = 10;
+    [Export] private bool flipFaces = false;
     [Export] private Material material;
     private MeshInstance meshInstance;
     
@@ -35,12 +36,12 @@ public class Planet : Spatial
         {
             if (terrainFaces[i] != null)
             {
-                terrainFaces[i].SetParams(resolution, directions[i]);
+                terrainFaces[i].UpdateParams(resolution, directions[i], flipFaces);
                 terrainFaces[i].ConstrucMesh(true);
             }
             else
             {
-                terrainFaces[i] = new TerrainFace(resolution, directions[i]);
+                terrainFaces[i] = new TerrainFace(resolution, directions[i], flipFaces);
                 terrainFaces[i].Name = $"Face {i}";
                 AddChild(terrainFaces[i]);
                 terrainFaces[i].MaterialOverride = material;
