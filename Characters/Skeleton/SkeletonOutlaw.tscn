@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=2]
+[gd_scene load_steps=43 format=2]
 
 [ext_resource path="res://Characters/Skeleton/SkeletonOutlaw@Attack01.tres" type="Animation" id=1]
 [ext_resource path="res://Characters/Skeleton/SkeletonOutlaw@Walk00.tres" type="Animation" id=2]
@@ -12,7 +12,7 @@
 [ext_resource path="res://Characters/Skeleton/Axes__Untitled_001.material" type="Material" id=10]
 [ext_resource path="res://Characters/Skeleton/Skeleton__Atlas_png.material" type="Material" id=11]
 [ext_resource path="res://Scripts/CharacterScript/AnimationControl.cs" type="Script" id=12]
-
+[ext_resource path="res://Characters/Skeleton/SkeletonOutlaw@Dead00.tres" type="Animation" id=13]
 
 [sub_resource type="PhysicsMaterial" id=1]
 friction = 0.1
@@ -173,29 +173,83 @@ surfaces/0 = {
 }
 
 [sub_resource type="AnimationNodeAnimation" id=13]
-animation = "SkeletonOutlaw@Idle00"
+animation = "SkeletonOutlaw@Attack00"
 
 [sub_resource type="AnimationNodeAnimation" id=14]
-animation = "SkeletonOutlaw@Walk00"
+animation = "SkeletonOutlaw@Attack01"
 
 [sub_resource type="AnimationNodeAnimation" id=15]
+animation = "SkeletonOutlaw@Attack02"
+
+[sub_resource type="AnimationNodeAnimation" id=16]
+animation = "SkeletonOutlaw@Dead00"
+
+[sub_resource type="AnimationNodeAnimation" id=17]
+animation = "SkeletonOutlaw@Idle00"
+
+[sub_resource type="AnimationNodeAnimation" id=18]
+animation = "SkeletonOutlaw@Walk00"
+
+[sub_resource type="AnimationNodeAnimation" id=19]
 animation = "SkeletonOutlaw@Run00"
 
-[sub_resource type="AnimationNodeBlendSpace1D" id=16]
-blend_point_0/node = SubResource( 13 )
+[sub_resource type="AnimationNodeBlendSpace1D" id=20]
+blend_point_0/node = SubResource( 17 )
 blend_point_0/pos = 0.0
-blend_point_1/node = SubResource( 14 )
+blend_point_1/node = SubResource( 18 )
 blend_point_1/pos = 0.5
-blend_point_2/node = SubResource( 15 )
+blend_point_2/node = SubResource( 19 )
 blend_point_2/pos = 1.0
 min_space = 0.0
 
-[sub_resource type="AnimationNodeStateMachine" id=17]
-states/Locomotion/node = SubResource( 16 )
-states/Locomotion/position = Vector2( 237, 141 )
-start_node = "Locomotion"
+[sub_resource type="AnimationNodeStateMachineTransition" id=21]
+advance_condition = "Attack"
+xfade_time = 0.25
 
-[sub_resource type="AnimationNodeStateMachinePlayback" id=18]
+[sub_resource type="AnimationNodeStateMachineTransition" id=22]
+switch_mode = 2
+auto_advance = true
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=23]
+switch_mode = 2
+auto_advance = true
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=24]
+switch_mode = 2
+auto_advance = true
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=25]
+switch_mode = 2
+advance_condition = "Attack"
+xfade_time = 0.25
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=26]
+switch_mode = 2
+advance_condition = "Attack"
+xfade_time = 0.25
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=27]
+advance_condition = "Dead"
+xfade_time = 0.25
+priority = 2
+
+[sub_resource type="AnimationNodeStateMachine" id=28]
+"states/Attack 1/node" = SubResource( 13 )
+"states/Attack 1/position" = Vector2( 475, 67 )
+"states/Attack 2/node" = SubResource( 14 )
+"states/Attack 2/position" = Vector2( 475, 135 )
+"states/Attack 3/node" = SubResource( 15 )
+"states/Attack 3/position" = Vector2( 475, 204 )
+states/Dead/node = SubResource( 16 )
+states/Dead/position = Vector2( 237, 53 )
+states/Locomotion/node = SubResource( 20 )
+states/Locomotion/position = Vector2( 237, 141 )
+transitions = [ "Locomotion", "Attack 1", SubResource( 21 ), "Attack 1", "Locomotion", SubResource( 22 ), "Attack 2", "Locomotion", SubResource( 23 ), "Attack 3", "Locomotion", SubResource( 24 ), "Attack 1", "Attack 2", SubResource( 25 ), "Attack 2", "Attack 3", SubResource( 26 ), "Locomotion", "Dead", SubResource( 27 ) ]
+start_node = "Locomotion"
+end_node = "Dead"
+graph_offset = Vector2( 110, 11 )
+
+[sub_resource type="AnimationNodeStateMachinePlayback" id=29]
 
 [node name="SkeletonOutlaw" instance=ExtResource( 6 )]
 physics_material_override = SubResource( 1 )
@@ -206,7 +260,6 @@ limitSpeed = 10.0
 maxSpeed = 5.0
 maxAcceleration = 5.0
 maxAirJumps = 1
-maxGroundAngle = 45.0
 alignSpeed = 5.0
 
 [node name="CollisionShape" type="CollisionShape" parent="." index="0"]
@@ -608,10 +661,12 @@ mesh = SubResource( 12 )
 material/0 = null
 
 [node name="AnimationTree" type="AnimationTree" parent="." index="3"]
-tree_root = SubResource( 17 )
+tree_root = SubResource( 28 )
 anim_player = NodePath("../AnimationPlayer")
 active = true
-parameters/playback = SubResource( 18 )
+parameters/playback = SubResource( 29 )
+parameters/conditions/Attack = false
+parameters/conditions/Dead = false
 parameters/Locomotion/blend_position = -0.0171258
 script = ExtResource( 12 )
 rigidBodyReference = NodePath("..")
@@ -622,6 +677,7 @@ moveParameter = "parameters/Locomotion/blend_position"
 anims/SkeletonOutlaw@Attack00 = ExtResource( 7 )
 anims/SkeletonOutlaw@Attack01 = ExtResource( 1 )
 anims/SkeletonOutlaw@Attack02 = ExtResource( 5 )
+anims/SkeletonOutlaw@Dead00 = ExtResource( 13 )
 anims/SkeletonOutlaw@Idle00 = ExtResource( 4 )
 anims/SkeletonOutlaw@Run00 = ExtResource( 3 )
 anims/SkeletonOutlaw@Walk00 = ExtResource( 2 )

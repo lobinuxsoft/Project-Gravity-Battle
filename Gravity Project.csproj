@@ -63,6 +63,7 @@
     <Compile Include="Scripts\PlanetGeneratorScripts\TerrainFace.cs" />
     <Compile Include="Scripts\ScriptableObjectTest\ClassStats.cs" />
     <Compile Include="Scripts\ScriptableObjectTest\StatsTable.cs" />
+    <Compile Include="Scripts\ShellGrass.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

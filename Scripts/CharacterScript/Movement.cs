@@ -58,6 +58,7 @@ public class Movement : RigidBody
             desiredJump = false;
             Jump(bodyState);
         }
+
         bodyState.LinearVelocity = velocity;
         
         ClearState();
